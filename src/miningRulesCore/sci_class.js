@@ -117,7 +117,7 @@ export const findCustomRelations = (id_start, customQueries, attributeList, quer
 
 export const addCustomRelations = (allAttributes, customQueries, classGroupings,
                                             analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
+                                            parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles) => {
 
   var parentClass = classGroupings[classGroupings.length-1];
   var classTree;
@@ -223,11 +223,11 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
       }
     }
 
-    // Record that this file was used to contribute to this database
+    /* Record that this file was used to contribute to this database
     let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
     let newStuff = listOfFiles.join("\n");
 
-    fileAnalysisMap.set(fileN, newStuff);
+    fileAnalysisMap.set(fileN, newStuff);*/
 }
 
 
@@ -369,7 +369,7 @@ export const findParentChildRelations = (id_start, classGroupings,
 
 export const addParentChildRelations = (allAttributes, classGroupings,
                                             analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap, dataMap,
+                                            parentInfo, /*fileAnalysisMap,*/ dataMap,
                                             xmlFiles, searchTerms) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
@@ -571,11 +571,11 @@ export const addParentChildRelations = (allAttributes, classGroupings,
         }
     }// End of outermost for loop
 
-    // Record that this file was used to contribute to this database
+    /* Record that this file was used to contribute to this database
     let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
     let newStuff = listOfFiles.join("\n");
 
-    fileAnalysisMap.set(fileN, newStuff);
+    fileAnalysisMap.set(fileN, newStuff); */
 
 };
 
@@ -606,7 +606,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
 */
 export const addVisitedElements = (allAttributes, visitedElements, classGroupings,
                                             analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
+                                            parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles) => {
 
   var parentClass = classGroupings[classGroupings.length-1];
   var classTree;
@@ -710,11 +710,11 @@ export const addVisitedElements = (allAttributes, visitedElements, classGrouping
     }
   }
 
-  // Record that this file was used to contribute to this database
+  /* Record that this file was used to contribute to this database
   let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
   let newStuff = listOfFiles.join("\n");
 
-  fileAnalysisMap.set(fileN, newStuff);
+  fileAnalysisMap.set(fileN, newStuff); */
 
 };
 
