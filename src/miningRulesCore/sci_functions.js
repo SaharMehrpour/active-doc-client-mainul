@@ -1754,11 +1754,11 @@ export const addParentChildRelationsExtra = (subCL[j], attributes, allAttributes
   /* class, function call, member variable */
   /* formal XML query, RulePad description, element API  */
   let searchCandidates = [
-    [".//src:class/src:name/text()=", "class with name ", ".//class/name"],
-    [".//src:class/src:block/src:function/src:call/src:name/text()=",
-        "class with function with name ", ".//class/block/function/call/name"],
-    [".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
-        "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"]];
+    [".//class/src:name/text()=", "class with name ", ".//name"],
+    [".//src:block/src:function/src:call/src:name/text()=",
+        "function with name ", ".//block/function/name"],
+    [".//src:block/src:decl_stmt/src:decl/src:name/text()=",
+        "declaration statement with name ", ".//block/decl_stmt/decl/name"]];
 
   /* For each element in searchTerms...*/
   for(let i = 0; i < searchTerms.length; i++){
@@ -1779,10 +1779,10 @@ export const addParentChildRelationsExtra = (subCL[j], attributes, allAttributes
 
              /* If we find the search term at least once, then we add the
               * search as a feature. */
-             for(let m = 0; m < search; m++){
+             for(let m = 0; m < search.length; m++){
 
                  if(search[m].text != null && search[m].text != "" &&
-                    search[m].text == keyword){
+                    search[m].text === (searchTerms[i]["searchTerms"])[j]){
 
                       // Check whether attribute has been seen globally
                       if(allAttributes.has(searchName)){
