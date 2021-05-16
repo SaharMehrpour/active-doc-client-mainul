@@ -1,13 +1,9 @@
-# Active Documentation
+# Active Documentation (Main Component)
 
 This app is written in "React" framework.
-It communicates with the server using "Web-Socket".
 
-## spmf.jar
-
-This file is required for FPMax algorithm (for mining design rules) to execute. It can be downloaded from this repository or [here](http://www.philippe-fournier-viger.com/spmf/index.php?link=download.php).
-**The file should be copied/moved to the root directory of the project.**
-
+- It communicates with the [IDE Connector](https://github.com/devuxd/ActiveDocumentation/tree/RulePad-version) using "Web-Socket".
+- It is based on _srcML_ library, which should be installed as instructed [here](https://github.com/devuxd/active-doc-client/wiki#installing-srcml).
 
 ## ruleTable.json
 
@@ -85,6 +81,8 @@ It is mandatory but is generated for newly added rules. Here is an example for t
 
 There is also another json file named `tagTable.json`. In this file we store information about tags. Here is an example for this file:
 
+_**Note:** `tagName` should not have spaces._
+
 ```javascript
 [
     {
@@ -99,16 +97,6 @@ There is also another json file named `tagTable.json`. In this file we store inf
     }
 ]
 ```
-
-## Generate Rules
-
-This system is using ANTLR4.
-
-* The grammar is stored in `myGrammar.g4`
-* The generated code with ANTLR is created through `gradle` script.
-* The `gradle.build` file is located in the root directory of the project.
-* Run `gradle generateParser`
-
 
 ## Used Ports
 

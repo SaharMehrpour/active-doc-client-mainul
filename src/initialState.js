@@ -300,6 +300,7 @@ export const initial_state = {
         backDisable: "disabled",
         clickedOnButtons: false
     },
+    loadingRules: false,
 
     rulePadState: {
         isEditMode: false,
@@ -321,26 +322,6 @@ export const initial_state = {
             guiElements: {...initial_graphicalElements}
         }
     },
-
-    // mining Rules
-    minedRulesState: {
-        metaData: {},
-        minedRules: []
-    },
-    featureSelection: {
-        filePath: "",
-        startOffset: "",
-        endOffset: "",
-        startLineOffset: "",
-        lineNumber: "",
-        lineText: "",
-        selectedText: "",
-        xpath: "",
-        modifiedSelectedText: "",
-        idMap: {},
-        displayTextArray: []
-    },
-    customFeatures: []
 };
 
 // used for editing existing rule

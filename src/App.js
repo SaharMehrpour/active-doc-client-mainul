@@ -11,8 +11,6 @@ import TableOfContents from "./ui/tableOfContents";
 import RuleTable from "./ui/ruleTable";
 import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
-import MinedRulesComponent from "./ui/MiningRules/minedRulesComponent";
-import FeatureSelection from "./ui/MiningRules/featureSelection";
 
 class App extends Component {
 
@@ -49,12 +47,15 @@ class App extends Component {
         }
 
         window.location.hash = "#/index";
+
+        this.state = {loading: false}
     }
 
     render() {
         return (
             <div>
                 <WebSocketManager/>
+                {this.renderLoading()}
                 <nav className={"navbar navbar-inverse"} id={"navBar"}>
                     <NavBar/>
                 </nav>
@@ -74,30 +75,55 @@ class App extends Component {
                          }>
                         <RuleTable/>
                     </div>
-                    <div id={"minedRules"}
-                         className={
-                             (["minedRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <MinedRulesComponent/>
-                    </div>
-                    <div id={"featureSelection"}
-                         className={
-                             (["featureSelection"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <FeatureSelection/>
-                    </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>
             </div>
         )
     }
 
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({loading: nextProps.loading})
+    }
+
+    /**
+     * render loading gif
+     * @return {null}
+     */
+    renderLoading() {
+        return this.state.loading ? (
+            <div style={{
+                padding: "20%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "hidden",
+                position: "fixed",
+                width: "100%",
+                height: "100%",
+                zIndex: "1",
+                backgroundColor: "rgba(0,0,0,0.1)"
+            }}>
+                <div style={{
+                    padding: "20%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 -5%",
+                    overflow: "hidden"
+                }}>
+                    <div className="spinner"/>
+                </div>
+            </div>
+        ) : null;
+    }
 }
 
 // map state to props
 function mapStateToProps(state) {
     return {
-        currentHash: state.currentHash
+        currentHash: state.currentHash,
+        loading: state.loadingRules
     }
 }
 

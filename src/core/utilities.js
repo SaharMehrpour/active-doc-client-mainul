@@ -56,56 +56,6 @@ class Utilities {
                     };
                     break;
 
-                    /*  mining rules  */
-
-                case webSocketSendMessage.learn_rules_metadata_msg:
-                    if (data.content.length > this.BREAK_LINE) {
-                        this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
-                        return;
-                    }
-                    messageJson.data = [[data.fileName, data.content]];
-                    break;
-
-                case webSocketSendMessage.learn_rules_file_location_msg:
-                    if (data.content.length > this.BREAK_LINE) {
-                        this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
-                        return;
-                    }
-                    messageJson.data = [[data.fileName, data.content]];
-                    break;
-
-                case webSocketSendMessage.learn_rules_databases_msg:
-                    if (data[0][1].length > this.BREAK_LINE) {
-                        this.sendChunkedData(messageJson, data[0][1].slice(0), data[0][0], ws);
-                        return;
-                    }
-                    messageJson.data = data; // array of arrays: [["file_name.txt", "data to be written"]]
-                    break;
-
-                case webSocketSendMessage.execute_tnr_msg:
-                    messageJson.data = {
-                        confidence: data.tnrConfidence, // double
-                        k: data.tnrK, //int
-                        delta: data.tnrDelta // int
-                    };
-                    break;
-
-                case webSocketSendMessage.execute_fp_max_msg:
-                    messageJson.data = data.fpMaxSupport; // support
-                    break;
-
-                case webSocketSendMessage.open_file_mined_rules:
-                    messageJson.command = webSocketSendMessage.snippet_xml_msg; // there is no separate command in the server
-                    messageJson.data = {
-                        fileName: data,
-                        xml: "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
-                            "</unit>"
-                    };
-                    break;
-
-                case webSocketSendMessage.dangerous_read_mined_rules_msg:
-                    break;
-
                 default:
                     break;
             }
@@ -242,7 +192,21 @@ class Utilities {
         return arr; // for testing purposes
     };
 
-
+    /**
+     * a method to parse strings
+     * @param stringJson
+     * @param dataName
+     * @param defaultValue
+     * @return {any}
+     */
+    static parseJson(stringJson, dataName, defaultValue) {
+        try {
+            return JSON.parse(stringJson);
+        } catch (e) {
+            console.log(`Failed to parse ${dataName}`);
+            return defaultValue;
+        }
+    }
 }
 
 

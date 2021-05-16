@@ -7,14 +7,11 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFileChange, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection,
-    updateDangerousMinedRules, updateProjectPath
+    updateWS, updateXmlFiles, updateProjectHierarchyData, updateProjectPath, connectToIDE
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
-import {parseGrouping} from "../miningRulesCore/parseGrouping";
-import {getXpathForFeature} from "../miningRulesCore/findingFeature";
-import {dangerousParseMetaDataFile} from "../miningRulesCore/miningRules";
 import {webSocketReceiveMessage} from "./coreConstants";
+import Utilities from "./utilities";
 
 class WebSocketManager extends Component {
 
@@ -39,9 +36,24 @@ class WebSocketManager extends Component {
 
             let message = JSON.parse(e.data);
 
-            // if (message.command !== "XML") console.log(message);
+            // if (message.command !== webSocketReceiveMessage.xml_files_msg) console.log(message);
 
             switch (message.command) {
+
+                case webSocketReceiveMessage.enter_chat_msg:
+                    this.props.onConnectToIDE();
+                    break;
+
+                case webSocketReceiveMessage.project_path_msg:
+                    // data: projectPath
+                    projectPath = message.data;
+                    this.props.onProjectPathUpdate(projectPath);
+                    break;
+
+                case webSocketReceiveMessage.project_hierarchy_msg:
+                    // data: {projectHierarchy}
+                    this.props.onProjectHierarchy(message.data);
+                    break;
 
                 case webSocketReceiveMessage.xml_files_msg:
                     // data: {filePath: "", xml: ""}
@@ -50,25 +62,14 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.rule_table_msg:
                     // data: [ruleTable]
-                    ruleTable = JSON.parse(message.data);
+                    ruleTable = Utilities.parseJson(message.data, "ruleTable", []);
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
                 case webSocketReceiveMessage.tag_table_msg:
                     // data: [tagTable]
-                    tagTable = JSON.parse(message.data);
+                    tagTable = Utilities.parseJson(message.data, "tagTable", []);
                     this.props.onUpdateTagTable(tagTable);
-                    break;
-
-                case webSocketReceiveMessage.project_hierarchy_msg:
-                    // data: {projectHierarchy}
-                    this.props.onProjectHierarchy(message.data);
-                    break;
-
-                case webSocketReceiveMessage.project_path_msg:
-                    // data: projectPath
-                    projectPath = message.data;
-                    this.props.onProjectPathUpdate(projectPath);
                     break;
 
                 case webSocketReceiveMessage.verify_rules_msg:
@@ -111,7 +112,7 @@ class WebSocketManager extends Component {
                     // data: {tagID: longNumber, tagInfo: {...}}
                     break;
 
-                case webSocketReceiveMessage.update_rule_msg: console.log(message.data);
+                case webSocketReceiveMessage.update_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
                     let updatedRule = message.data["ruleInfo"];
                     try {
@@ -134,8 +135,8 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.new_rule_msg:
-                    // data: {ruleID: longNumber, rule: {...}}
-                    let newAddedRule = JSON.parse(message.data["rule"]);
+                    // data: {ruleID: longNumber, ruleInfo: {...}}
+                    let newAddedRule = message.data["ruleInfo"];
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     ruleTable[ruleTable.length - 1] = runRulesByTypes(xml, newAddedRule);
@@ -147,8 +148,8 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.new_tag_msg:
-                    // data: {tagID: longNumber, tag: {...}}
-                    let newAddedTag = JSON.parse(message.data["tag"]);
+                    // data: {tagID: longNumber, tagInfo: {...}}
+                    let newAddedTag = message.data["tagInfo"];
                     tagTable.push(newAddedTag);
                     this.props.onUpdateTagTable(tagTable);
                     break;
@@ -167,49 +168,6 @@ class WebSocketManager extends Component {
                         this.props.onFalsifyIgnoreFile();
                     break;
 
-                    /* Mining Rules */
-
-                case webSocketReceiveMessage.tnr_output_msg:
-                    console.log(message.data);
-                    break;
-
-                case webSocketReceiveMessage.fp_max_output_msg:
-                    // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
-                    let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
-                    this.props.onUpdateMinedRules(modifiedOutput);
-                    break;
-
-                case webSocketReceiveMessage.feature_selection_msg:
-                    console.log(message.data);
-                    let selected = xml.filter(d => d.filePath === message.data["path"]);
-                    if (selected.length > 0) {
-                        //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
-                        let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
-                        window.location.hash = "#/featureSelection";
-
-                        // filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
-                        //         xpath, modifiedSelectedText, idMap, displayTextArray
-                        this.props.onUpdateFeatureSelection({
-                            ...message.data,
-                            filePath: message.data["path"],
-                            selectedText: message.data["text"],
-
-                            xpath: textXpathData.xpath,
-                            modifiedSelectedText: textXpathData.selectedText,
-                            idMap: textXpathData.idMap,
-                            displayTextArray: textXpathData.displayTextArray
-                        });
-                    }
-                    break;
-
-                // dangerously read output files and meta data.
-                case webSocketReceiveMessage.dangerous_read_mined_rules_msg:
-                    let metaData = dangerousParseMetaDataFile(JSON.parse(message.data["metaData"]));
-                    let outputFiles = Object.values(JSON.parse(JSON.parse(message.data["outputFiles"])));
-                    let output = parseGrouping(outputFiles, metaData);
-                    this.props.onUpdateDangerousMinedRules(metaData, output);
-                    break;
-
                 default:
             }
         };
@@ -226,13 +184,12 @@ class WebSocketManager extends Component {
 function mapStateToProps(state) {
     return {
         ignoreFileChange: state.ignoreFileChange,
-
-        minedRuleMetaData: state.minedRulesState.metaData
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        onConnectToIDE: () => dispatch(connectToIDE()),
         onUpdateWS: (ws) => dispatch(updateWS(ws)),
         onProjectHierarchy: (hierarchyData) => dispatch(updateProjectHierarchyData(hierarchyData)),
         onProjectPathUpdate: (projectPath) => dispatch(updateProjectPath(projectPath)),
@@ -242,10 +199,6 @@ function mapDispatchToProps(dispatch) {
         onFalsifyIgnoreFile: () => dispatch(ignoreFileChange(false)),
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
-
-        onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-        onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject)),
-        onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))
     }
 }
 
