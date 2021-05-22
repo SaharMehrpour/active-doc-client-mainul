@@ -2,6 +2,7 @@
 const element_conditions = {
     annotation: {
         type: "text",
+        informationType: "annotation",
         pre: "@",
         post: "",
         placeholder: "annotation",
@@ -19,9 +20,10 @@ const element_conditions = {
     },
     specifier: {
         type: "smallText",
+        informationType: "specifier",
         pre: "",
         post: "",
-        placeholder: "static ?",
+        placeholder: "specifier",
         unique: true,
         grammar: "specifier"
     },
@@ -57,6 +59,7 @@ const element_conditions = {
     },
     class_name: {
         type: "text",
+        informationType: "TEXTS",
         pre: "",
         post: "",
         placeholder: "className",
@@ -66,6 +69,7 @@ const element_conditions = {
     },
     class_implements: {
         type: "text",
+        informationType: "TEXTS",
         pre: "implements",
         post: "",
         placeholder: "Interface",
@@ -76,6 +80,7 @@ const element_conditions = {
     },
     class_extends: {
         type: "text",
+        informationType: "TEXTS",
         pre: "extends",
         post: "",
         placeholder: "Superclass",
@@ -110,6 +115,7 @@ const element_conditions = {
     },
     interface_name: {
         type: "text",
+        informationType: "TEXTS",
         pre: "",
         post: "",
         placeholder: "interfaceName",
@@ -119,6 +125,7 @@ const element_conditions = {
     },
     interface_extends: {
         type: "text",
+        informationType: "TEXTS",
         pre: "extends",
         post: "",
         placeholder: "base interface",
@@ -157,6 +164,7 @@ const element_conditions = {
     },
     function_return_type: {
         type: "text",
+        informationType: "type",
         pre: "",
         post: "",
         placeholder: "return type",
@@ -166,6 +174,7 @@ const element_conditions = {
     },
     function_name: {
         type: "text",
+        informationType: "TEXTS",
         pre: "",
         post: "",
         placeholder: "functionName",
@@ -175,6 +184,7 @@ const element_conditions = {
     },
     function_expression_statement: {
         type: "wideText",
+        informationType: "expression statement",
         pre: "",
         post: ";",
         placeholder: "expression statement inside function",
@@ -183,6 +193,7 @@ const element_conditions = {
     },
     function_return_value: {
         type: "wideText",
+        informationType: "return value",
         pre: "return",
         post: ";",
         placeholder: "return statement of function",
@@ -219,6 +230,7 @@ const element_conditions = {
     },
     constructor_expression_statement: {
         type: "wideText",
+        informationType: "expression statement",
         pre: "",
         post: ";",
         placeholder: "expression statement inside constructor",
@@ -252,6 +264,7 @@ const element_conditions = {
     },
     abstract_function_return_type: {
         type: "text",
+        informationType: "return value",
         pre: "",
         post: "",
         placeholder: "return type",
@@ -261,6 +274,7 @@ const element_conditions = {
     },
     abstract_function_name: {
         type: "text",
+        informationType: "TEXTS",
         pre: "",
         post: "",
         placeholder: "abstractFunctionName",
@@ -295,6 +309,7 @@ const element_conditions = {
     },
     declaration_statement_type: {
         type: "text",
+        informationType: "type",
         pre: "",
         post: "",
         placeholder: "variableType",
@@ -304,6 +319,7 @@ const element_conditions = {
     },
     declaration_statement_name: {
         type: "text",
+        informationType: "TEXTS",
         pre: "",
         post: "",
         placeholder: "variableName",
@@ -313,6 +329,7 @@ const element_conditions = {
     },
     declaration_statement_initialization: {
         type: "text",
+        informationType: "initial value",
         pre: "",
         post: "",
         placeholder: "variableInitialization",
@@ -347,6 +364,7 @@ const element_conditions = {
     },
     parameter_type: {
         type: "text",
+        informationType: "type",
         pre: "",
         post: "",
         placeholder: "parameter type",
@@ -356,6 +374,7 @@ const element_conditions = {
     },
     parameter_name: {
         type: "text",
+        informationType: "TEXTS",
         pre: "",
         post: "",
         placeholder: "parameter name",

@@ -33,10 +33,10 @@ import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
     editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFileChange
 } from "../../actions";
-import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
+import {generateGuiTrees} from "./rulePadTextualEditor/generateGuiTree";
 import TextualEditor from "../RulePad/rulePadTextualEditor/textualEditor";
 import Utilities from "../../core/utilities";
-import {error_messages_IMarkdownString} from "../RulePad/rulePadTextualEditor/textualEditorConstant";
+import {error_messages_IMarkdownString} from "./rulePadTextualEditor/textualEditorConstant";
 
 import title_description_filled from "./resources/title_description_filled.png";
 import visibility_class_declaration from "./resources/visibility_class_declaration.png";
@@ -559,8 +559,8 @@ class RulePad extends Component {
 
 
     /**
-     * render the turorial steps above the text editor
-     * @returns {XML}
+     * render the tutorial steps above the text editor
+     * @returns {JSX.Element}
      */
     renderTutorial() {
 
@@ -708,7 +708,7 @@ class RulePad extends Component {
 
     /**
      * render AutoComplete Alert for displaying errors
-     * @return {XML}
+     * @return {JSX.Element}
      */
     renderAutoCompleteError() {
         if (this.state.editorError !== "") console.log(this.state.editorError);
@@ -765,7 +765,7 @@ class RulePad extends Component {
     /**
      * render the dialog for adding a new tag
      * it is displayed when the 'New Tag' is clicked on
-     * @returns {XML}
+     * @returns {JSX.Element}
      */
     renderNewTagModalDialog() {
         return (
@@ -811,7 +811,7 @@ class RulePad extends Component {
 
     /**
      * render the modal for printing messages when errors appear for submission
-     * @return {XML}
+     * @return {JSX.Element}
      */
     renderErrorInSubmission() {
         return (
@@ -832,7 +832,7 @@ class RulePad extends Component {
 
     /**
      * render step-by-step tour guide
-     * @returns {XML}
+     * @returns {JSX.Element}
      */
     renderTourGuide() {
         return (
@@ -945,7 +945,7 @@ class RulePad extends Component {
     /**
      * create a list div node for quantifier and satisfied result and wrap them in a div
      * @param group
-     * @returns {XML}
+     * @returns {JSX.Element}
      */
     renderListOfSnippets(group) {
 
@@ -1191,7 +1191,7 @@ class RulePad extends Component {
 
                 if (children[i].nodeName === "#text") {
                     if (children.length === 1)
-                        res.push(`text()="${children[i].nodeValue}"`);
+                        res.push(`text()='${children[i].nodeValue}'`);
                 }
                 else {
                     res.push(traverseChildren(children[i]));
@@ -1351,7 +1351,7 @@ class RulePad extends Component {
             return;
         }
 
-        if (rule.index === "" || rule.title === "" || rule.description === "") {
+        if (rule.index || rule.title === "" || rule.description === "") {
             this.setState({
                 errorTitle: "Error in Submitting the updated Rule",
                 errorMessage: "Make sure to enter 'title' and 'description' for the rule.",

@@ -485,10 +485,10 @@ class GraphicalComponent extends Component {
         let nodes = group !== "body" ? this.nodes[group] : this.nodes["body"][innerIndex];
         let texts = group !== "body" ? this.state.texts[group] : this.state.texts["body"][innerIndex];
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
-        let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "TEXTS";
+        let informationGroup = childCondition.informationType ? childCondition.informationType : "TEXTS";
         let wordRegex = /^(!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)$/;
-        let combinatorialRegex = /^([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| )+$/;
-        let wordOrCombinatorialRegex = /^(([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| )+|((!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)))$/;
+        let combinatorialRegex = /^([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| |'|,)+$/;
+        let wordOrCombinatorialRegex = /^(([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| |'|,)+|((!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)))$/;
         let validatorRegex = childCondition.wordValidation === "both" ? wordOrCombinatorialRegex : childCondition.wordValidation === "word" ? wordRegex : combinatorialRegex;
 
         let mouseEnter = () => {
@@ -513,7 +513,8 @@ class GraphicalComponent extends Component {
         };
 
         let focus = () => {
-            if (childCondition.wordValidation === "word" && shouldDisplayInformation && nodes && nodes[index] && nodes[index]["information"]
+            if (childCondition.informationType && shouldDisplayInformation
+                && nodes && nodes[index] && nodes[index]["information"]
                 && Object.entries(nodes[index]["information"]).length !== 0)
                 nodes[index]["information"].style.display = "block";
         };
@@ -896,7 +897,7 @@ class GraphicalComponent extends Component {
 
     /**
      * render the dialog for documentation
-     * @returns {XML}
+     * @returns {JSX.Element}
      */
     renderDocModalDialog() {
         return (
