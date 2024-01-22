@@ -722,6 +722,10 @@ class CodeSnippets extends Component {
             </div>);
     }
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({codeSnippets: nextProps.codeSnippets})
+    }
+
     renderCodeSnippets() {
         if (!this.state.codeSnippets) {
             return <div>{"Unavailable"}</div>
