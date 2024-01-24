@@ -100,9 +100,10 @@ class WebSocketManager extends Component {
                     // data: "filePath"
                     let filePath = message.data;
                     ruleTable = checkRulesForFile(xmlData, ruleTable, filePath);
-                    this.props.onFilePathChange(filePath);
+                    // todo uncomment, temporary commenting for mining design rules study
+                    // this.props.onFilePathChange(filePath);
                     this.props.onUpdateRuleTable(ruleTable);
-                    window.location.hash = `#/${hashConst.codeChanged}`;
+                    // window.location.hash = `#/${hashConst.codeChanged}`;
                     break;
 
                 case webSocketReceiveMessage.update_tag_msg:
@@ -166,18 +167,19 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.file_change_in_ide_msg:
+                    // todo uncomment, temporary commenting for mining design rules study
                     // data: "filePath"
-                    let focusedFilePath = message.data;
-                    if (!this.props.ignoreFileChange) {
-                        this.props.onFilePathChange(focusedFilePath);
-                        window.location.hash = `#/${hashConst.rulesForFile}/` + focusedFilePath.replace(/\//g, "%2F");
-                    } else {
-                        counter--;
-                        if (counter === 0) {
-                            this.props.onFalsifyIgnoreFile();
-                            counter = 3;
-                        }
-                    }
+                    // let focusedFilePath = message.data;
+                    // if (!this.props.ignoreFileChange) {
+                    //     this.props.onFilePathChange(focusedFilePath);
+                    //     window.location.hash = `#/${hashConst.rulesForFile}/` + focusedFilePath.replace(/\//g, "%2F");
+                    // } else {
+                    //     counter--;
+                    //     if (counter === 0) {
+                    //         this.props.onFalsifyIgnoreFile();
+                    //         counter = 3;
+                    //     }
+                    // }
                     break;
 
                 /* Mining Rules */

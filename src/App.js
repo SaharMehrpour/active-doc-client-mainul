@@ -48,7 +48,8 @@ class App extends Component {
             }, 100);
         }
 
-        window.location.hash = "#/index";
+        // todo change back to #/index temporary change for mining rules study
+        window.location.hash = `#/${hashConst.learnDesignRules}/`;
 
         this.state = {loadingGif: false}
     }
@@ -58,28 +59,29 @@ class App extends Component {
             <div>
                 <WebSocketManager/>
                 {this.renderLoading()}
-                <nav className={"navbar navbar-inverse"} id={"navBar"}>
-                    <NavBar/>
-                </nav>
+                {/*<nav className={"navbar navbar-inverse"} id={"navBar"}>*/}
+                {/*    <NavBar/>*/}
+                {/*</nav>*/}
                 <div>
                     <div className={"main container"} id={"headerBar"}>
                         <HeaderBar/>
                     </div>
-                    <div id={"tableOfContent"}
-                         className={
-                             ([hashConst.index, hashConst.tagJsonChanged, hashConst.ruleJsonChanged].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <TableOfContents/>
-                    </div>
-                    <div id={"ruleResults"}
-                         className={
-                             ([hashConst.rules, hashConst.tag, hashConst.codeChanged, hashConst.rulesForFile, hashConst.violatedRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <RuleTable/>
-                    </div>
+                    {/*<div id={"tableOfContent"}*/}
+                    {/*     className={*/}
+                    {/*         ([hashConst.index, hashConst.tagJsonChanged, hashConst.ruleJsonChanged].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"*/}
+                    {/*     }>*/}
+                    {/*    <TableOfContents/>*/}
+                    {/*</div>*/}
+                    {/*<div id={"ruleResults"}*/}
+                    {/*     className={*/}
+                    {/*         ([hashConst.rules, hashConst.tag, hashConst.codeChanged, hashConst.rulesForFile, hashConst.violatedRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"*/}
+                    {/*     }>*/}
+                    {/*    <RuleTable/>*/}
+                    {/*</div>*/}
                     <div id={"learnDesignRules"}
                          className={
-                             ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                             // ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" :
+                                 "main container"
                          }>
                         <MinedRulesComponent/>
                     </div>

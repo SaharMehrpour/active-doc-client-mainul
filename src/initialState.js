@@ -9,6 +9,7 @@
  */
 
 import {allAlgorithms} from "./miningRulesCore/featureConfig";
+import {hashConst} from "./ui/uiConstants";
 
 /**
   * @typedef {{element: string, featureIds: number[]}} elementFeatures
@@ -657,7 +658,8 @@ export const initial_state = {
     xmlFiles: [],
     projectHierarchy: {},
     projectPath: "",
-    currentHash: ["index"],
+    // todo change back to "index" temporary change for mining rules study
+    currentHash: [hashConst.learnDesignRules],
     ignoreFileChange: false, // ignore the file switching in the IDE
     displayEditRuleTutorial: true, // display the tour guide for edit rule
     message: "init",
