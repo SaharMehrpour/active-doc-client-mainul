@@ -42,9 +42,6 @@ export class NavBar extends Component {
                         <NavItem eventKey={3}>
                             Violated Rules
                         </NavItem>
-                        <NavItem eventKey={4}>
-                            Learn Design Rules
-                        </NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

@@ -6,17 +6,14 @@ import {Component} from "react";
 import {connect} from "react-redux";
 
 import {
-    receiveExpressionStatementXML,
     ignoreFileChange, updateFilePath,
     updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles,
-    updateProjectHierarchyData, updatedMinedRules, updateProjectPath,
-    updateLoadingGif, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
+    updateProjectHierarchyData, updateProjectPath,
+    updateLoadingGif
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {webSocketReceiveMessage} from "./coreConstants";
-import {processReceivedFrequentItemSets} from "../miningRulesCore/postProcessing";
-import {getDataForFocusedElement, processDoiInformation} from "../miningRulesCore/focusedElementProcessing";
 import Utilities from "./utilities";
 import {hashConst} from "../ui/uiConstants";
 
@@ -137,11 +134,6 @@ class WebSocketManager extends Component {
                     // data: {ruleID: longNumber, ruleInfo: {...}}
                     break;
 
-                case webSocketReceiveMessage.xml_from_code_msg:
-                    // data: {xmlText: "", messageID: ""}
-                    this.props.onReceiveExprStmtXML(message.data);
-                    break;
-
                 case webSocketReceiveMessage.new_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
                     let newAddedRule = message.data["ruleInfo"];
@@ -180,48 +172,6 @@ class WebSocketManager extends Component {
                     }
                     break;
 
-                /* Mining Rules */
-
-                case webSocketReceiveMessage.element_info_for_mine_rules:
-                    window.location.hash = `#/${hashConst.learnDesignRules}/`;
-                    let focusedElementFile = xmlData.filter(d => d.filePath === message.data["filePath"]);
-                    if (focusedElementFile.length > 0) {
-                        let focusedElementData = getDataForFocusedElement(
-                            focusedElementFile[0], message.data["startOffset"]);
-                        focusedElementData.filePath = message.data["filePath"].replace(projectPath, "");
-                        this.props.onUpdateFocusedElementData(focusedElementData);
-                    }
-                    break;
-
-                case webSocketReceiveMessage.doi_information:
-                    // "recentVisitedFiles", "recentSearches", "recentVisitedElements"
-                    let recentVisitedFiles = Utilities.parseJson(message.data["recentVisitedFiles"],
-                        "recentVisitedFiles", []);
-                    let recentSearchKeywords = Utilities.parseJson(message.data["recentSearches"],
-                        "recentSearches", []);
-                    let recentVisitedElements = Utilities.parseJson(message.data["recentVisitedElements"],
-                        "recentVisitedElements", []);
-                    let newDoiInformation = processDoiInformation(recentVisitedFiles, recentSearchKeywords,
-                        recentVisitedElements, xmlData, this.props.projectPath);
-                    this.props.onUpdateDoiInformation(newDoiInformation);
-
-                    break;
-
-                case webSocketReceiveMessage.request_mine_rules_for_element:
-                    window.location.hash = `#/${hashConst.learnDesignRules}/`;
-                    this.props.onRequestMineRulesForElement();
-                    break;
-
-                case webSocketReceiveMessage.mined_design_rules:
-                    // "minedFrequentItemSets", "algorithm"
-                    let output = message.data["minedFrequentItemSets"];
-                    let algorithm = message.data["algorithm"];
-                    processReceivedFrequentItemSets(output, algorithm, this.props.featureMetaData)
-                        .then(processedRules => {
-                            this.props.onUpdateMinedRules(processedRules);
-                        }).catch(e => console.log("error happened in promise", e));
-                    break;
-
                 default:
             }
         };
@@ -239,7 +189,6 @@ function mapStateToProps(state) {
     return {
         ignoreFileChange: state.ignoreFileChange,
         projectPath: state.projectPath,
-        featureMetaData: state.minedRulesState.featureMetaData
     };
 }
 
@@ -253,13 +202,7 @@ function mapDispatchToProps(dispatch) {
         onUpdateTagTable: (tagTable) => dispatch(updateTagTable(tagTable)),
         onFilePathChange: (filePath) => dispatch(updateFilePath(filePath)),
         onFalsifyIgnoreFile: () => dispatch(ignoreFileChange(false)),
-        onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
-
-        onUpdateFocusedElementData: (focusedElementData) => dispatch(updateFocusedElementData(focusedElementData)),
-        onUpdateDoiInformation: (doiInformation) => dispatch(updateDoiInformation(doiInformation)),
-        onRequestMineRulesForElement: () => dispatch(requestMineRulesForElement()),
-        onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
     }
 }
 

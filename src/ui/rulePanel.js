@@ -9,11 +9,9 @@ import {
     Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse
 } from "react-bootstrap";
 import {FaCaretDown,FaCaretUp} from "react-icons/fa";
-import {MdEdit} from "react-icons/md";
 
-import {changeEditMode, ignoreFileChange} from "../actions";
+import {ignoreFileChange} from "../actions";
 import Utilities from "../core/utilities";
-import RulePad from "./RulePad/rulePad";
 import {reduxStoreMessages} from "../reduxStoreConstants";
 import {webSocketSendMessage} from "../core/coreConstants";
 import {relatives} from "../core/ruleExecutorConstants";
@@ -94,11 +92,7 @@ class RulePanel extends Component {
     }
 
     render() {
-        if (!this.ruleI && !this.state.editMode) return null;
-        if (this.state.editMode)
-            return (
-                <RulePad ruleIndex={this.ruleIndex}
-                              changeEditMode={() => this.changeEditMode()}/>);
+        if (!this.ruleI) return null;
         return (
             <div className={this.state.className}>
                 <FormGroup>
@@ -109,9 +103,6 @@ class RulePanel extends Component {
                         <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
                                      style={this.caretClass[(!this.state.openPanel).toString()]}
                                      className={"react-icons"}/>
-                        <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
-                                onClick={() => this.changeEditMode()}
-                                className={"react-icons"}/>
                     </div>
                     <ControlLabel>{this.state.title}</ControlLabel>
                     <p>{this.state.description}</p>
@@ -415,13 +406,6 @@ class RulePanel extends Component {
 
         return {openPanel: false, className: "rulePanelDiv"};
     }
-
-    /**
-     * change edit mode, set the states
-     */
-    changeEditMode() {
-        this.props.onChangeEditMode(this.ruleIndex, !this.state.editMode)
-    }
 }
 
 // map state to props
@@ -440,7 +424,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
-        onChangeEditMode: (ruleIndex, newEditMode) => dispatch(changeEditMode(ruleIndex, newEditMode))
     }
 }
 

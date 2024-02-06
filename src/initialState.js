@@ -8,7 +8,6 @@
  * featureCategories: {classType, constructorType, functionType}
  */
 
-import {allAlgorithms} from "./miningRulesCore/featureConfig";
 
 /**
   * @typedef {{element: string, featureIds: number[]}} elementFeatures
@@ -692,36 +691,6 @@ export const initial_state = {
 
     sentXpathMessages: [],
     receivedXpathMessages: [],
-
-    // mining Rules
-    minedRulesState: {
-        // see miningRulesCore/extractFeatures/createFeatureMetaDataMap()
-        featureMetaData: {
-            featureInfoContainers: {
-                featureInfo: {},
-                featureInfoReverse: {},
-                featureMap: {},
-                featureMapReverse: {}
-            },
-            featureGroups: {spec: {}, usage: {}}
-        },
-        groupingMetaData: {
-            groupMapping: {},
-            fileMapping:{}
-        },
-        focusedElementData: {
-            filePath: "",
-            identifier: "",
-            mapFocusedElementToFeaturesKey: ""
-        },
-        doiInformation: {
-            recentVisitedFiles: [],
-            recentSearches: [],
-            recentVisitedElements: []
-        },
-        selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT,
-        minedRules: [],
-    }
 
 };
 

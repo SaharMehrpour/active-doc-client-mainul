@@ -9,7 +9,6 @@ import RulePanel from "./rulePanel";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 import {MdPlaylistAdd} from "react-icons/md";
-import {changeEditMode} from "../actions";
 import {hashConst} from "./uiConstants";
 
 class RuleTable extends Component {
@@ -21,20 +20,6 @@ class RuleTable extends Component {
     render() {
         return (
             <Fragment>
-                {this.props.hash0 === hashConst.rules ?
-                    (!this.props.newRule ? (
-                        <div style={{paddingBottom: "10px", clear: "both"}}>
-                            <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
-                                <MdPlaylistAdd className={"react-icons"} size={35}/>
-                                Add a New Rule
-                            </Button>
-                        </div>
-                    ) : (
-                        <div style={{paddingBottom: "5px"}}>
-                            <RulePanel ruleIndex={-1}/>
-                        </div>
-                    ))
-                    : null}
                 <div>
                     {this.props.indicesOfRulesToDisplay.map((d, i) =>
                         (<div key={i} style={{paddingBottom: "5px"}}>
@@ -83,10 +68,6 @@ function mapStateToProps(state) {
     return props;
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        onChangeEditMode: () => dispatch(changeEditMode(-1, true))
-    }
-}
+function mapDispatchToProps(dispatch) {}
 
 export default connect(mapStateToProps, mapDispatchToProps)(RuleTable);

@@ -11,7 +11,6 @@ import TableOfContents from "./ui/tableOfContents";
 import RuleTable from "./ui/ruleTable";
 import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
-import MinedRulesComponent from "./ui/MiningRules/minedRulesComponent";
 import {hashConst} from "./ui/uiConstants";
 
 class App extends Component {
@@ -77,12 +76,6 @@ class App extends Component {
                          }>
                         <RuleTable/>
                     </div>
-                    <div id={"learnDesignRules"}
-                         className={
-                             ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <MinedRulesComponent/>
-                    </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>
             </div>
@@ -101,7 +94,7 @@ class App extends Component {
             <div className={"overlayLoading"}>
                 <div className={"spinnerContainer"}>
                     <div className={"loadingTitle"}>
-                        <h3>{"Loading Rules and Preprocessing"}</h3>
+                        <h3>{"Loading Rules"}</h3>
                     </div>
                     <div className="spinner"/>
                 </div>

@@ -7,13 +7,6 @@ export const webSocketSendMessage = {
     new_tag_msg: "NEW_TAG",
 
     open_file_msg: "OPEN_FILE",
-
-    refresh_learn_design_rules_directory_msg: "REFRESH_LEARNING_DR_DIRECTORY",
-    learn_design_rules_databases_msg: "LEARN_DESIGN_RULES_DATABASE",
-    learn_design_rules_features_msg: "LEARN_DESIGN_RULES_FEATURES",
-    learn_design_rules_helper_files_msg: "LEARN_DESIGN_RULES_HELPER_FILES",
-    mine_design_rules_msg: "MINE_DESIGN_RULES"
-
 };
 
 export const webSocketReceiveMessage = {
@@ -35,11 +28,6 @@ export const webSocketReceiveMessage = {
     new_tag_msg: "NEW_TAG",
     failed_new_tag_msg: "FAILED_NEW_TAG",
     file_change_in_ide_msg: "FILE_CHANGE",
-
-    element_info_for_mine_rules: "ELEMENT_INFO_FOR_MINE_RULES",
-    doi_information: "DOI_INFORMATION",
-    request_mine_rules_for_element: "MINE_RULES_FOR_ELEMENT",
-    mined_design_rules: "MINED_DESIGN_RULES",
 
     enter_chat_msg: "ENTER",
     left_chat_msg: "LEFT"

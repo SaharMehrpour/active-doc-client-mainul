@@ -5,10 +5,6 @@
 import React, {Component} from "react";
 import "../App.css";
 import {connect} from "react-redux";
-import {Button} from "react-bootstrap";
-import {MdPlaylistAdd} from "react-icons/md";
-
-import {changeEditMode} from "../actions";
 import {hashConst} from "./uiConstants";
 
 class TableOfContents extends Component {
@@ -41,16 +37,6 @@ class TableOfContents extends Component {
                         )}
                         </tbody>
                     </table>
-                    <div style={{padding: "10px 0 10px 0", clear: "both"}}>
-                        <Button style={{padding: "0 5px"}}
-                                onClick={() => {
-                                    window.location.hash = `#/${hashConst.rules}`;
-                                    this.props.onAddNewRule()
-                                }}>
-                            <MdPlaylistAdd className={"react-icons"} size={35}/>
-                            Add a New Rule
-                        </Button>
-                    </div>
                 </div>
             </div>
         )
@@ -83,10 +69,6 @@ function mapStateToProps(state) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        onAddNewRule: () => dispatch(changeEditMode(-1, true))
-    }
-}
+function mapDispatchToProps(dispatch) {}
 
 export default connect(mapStateToProps, mapDispatchToProps)(TableOfContents);

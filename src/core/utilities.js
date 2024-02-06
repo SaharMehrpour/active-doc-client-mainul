@@ -1,7 +1,7 @@
 /**
  * Created by saharmehrpour on 9/8/17.
  */
-import {defaultXML, webSocketSendMessage} from "./coreConstants";
+import {webSocketSendMessage} from "./coreConstants";
 
 class Utilities {
 
@@ -53,33 +53,6 @@ class Utilities {
                     messageJson.data = {
                         tagID: data.ID,
                         tagInfo: data
-                    };
-                    break;
-
-                    /*  mining rules  */
-
-                case webSocketSendMessage.learn_design_rules_databases_msg:
-                case webSocketSendMessage.learn_design_rules_features_msg:
-                case webSocketSendMessage.learn_design_rules_helper_files_msg:
-                    if (data.content.length > this.BREAK_LINE) {
-                        this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
-                        return;
-                    }
-                    messageJson.data = [[data.fileName, data.content]];
-                    break;
-
-                case webSocketSendMessage.mine_design_rules_msg:
-                    messageJson.data = {
-                        parameters : data.parameters, // should be an array
-                        algorithm: data.algorithm // selectedAlgorithm from allAlgorithms
-                    };
-                    break;
-
-                case webSocketSendMessage.open_file_msg:
-                    messageJson.command = webSocketSendMessage.snippet_xml_msg; // there is no separate command in the server
-                    messageJson.data = {
-                        fileName: data,
-                        xml: defaultXML
                     };
                     break;
 
