@@ -7,8 +7,6 @@ import "../App.css";
 
 import RulePanel from "./rulePanel";
 import {connect} from "react-redux";
-import {Button} from "react-bootstrap";
-import {MdPlaylistAdd} from "react-icons/md";
 import {hashConst} from "./uiConstants";
 
 class RuleTable extends Component {
@@ -42,7 +40,6 @@ class RuleTable extends Component {
 function mapStateToProps(state) {
 
     let props = {
-        newRule: state.rulePadState.isEditMode,
         indicesOfRulesToDisplay: state.ruleTable.map(d => d.index),
         hash0: state.currentHash[0]
     };

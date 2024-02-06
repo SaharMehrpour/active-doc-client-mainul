@@ -27,11 +27,7 @@ class RulePanel extends Component {
          * @type {null|{index:number, title:string, description:string, tags:[], grammar:string, 
          * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE", 
          * processFilesFolders:"WITHIN", 
-         * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string, 
-         * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string, 
-         * filesFolders:[], 
-         * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[], 
-         * graphicalEditorState:{guiTree:{}, guiElements:{}, ruleType:string}}, 
+         * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string,
          * xPathQueryResult:[{
          * data:{quantifierResult:[{filePath:string,snippet:string,xml:{fileName:string,  
          * xml:string}}], 
@@ -47,8 +43,6 @@ class RulePanel extends Component {
             openPanel: true,
             className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
             activeTab: 0,
-
-            editMode: this.newRuleRequest,
 
             title: "",
             description: "",
@@ -75,8 +69,6 @@ class RulePanel extends Component {
                 this.state.folderConstraint = this.ruleI.checkForFilesFoldersConstraints;
                 this.state.filesFolders = this.ruleI.checkForFilesFolders;
                 this.state.tagTable = props.tagTable;
-
-                this.state.editMode = this.ruleI.rulePanelState.editMode;
             }
         }
 
@@ -150,7 +142,6 @@ class RulePanel extends Component {
                     ruleTags: this.ruleI.tags,
                     folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
                     filesFolders: this.ruleI.checkForFilesFolders,
-                    editMode: false
                 };
             }
         }
@@ -163,33 +154,11 @@ class RulePanel extends Component {
         else if (nextProps.message === reduxStoreMessages.file_path_update_msg)
             this.setState({...newState, filePath: nextProps.filePath});
 
-        else if (nextProps.message === reduxStoreMessages.change_edit_mode_msg) {
-            let indices = nextProps.rules.map(d => d.index);
-            let arrayIndex = indices.indexOf(this.ruleIndex);
-            if (this.ruleIndex !== -1) {
-                if (arrayIndex === -1)
-                    console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
-                Only ${indices.toString()} are found as indices.`);
-                else {
-                    this.ruleI = nextProps.rules[arrayIndex];
-                    newState.editMode = this.ruleI.rulePanelState.editMode;
-                    this.setState({...newState, filePath: nextProps.filePath});
-                }
-            }
-        }
-
         // existing rule
         else if (nextProps.message === reduxStoreMessages.update_rule_table_msg && this.ruleIndex !== -1) {
             if (arrayIndex !== -1) {
-                if (this.ruleI.rulePanelState.editMode && !this.state.editMode) {
-                    newState.editMode = true;
-                    this.setState({...newState, filePath: nextProps.filePath});
-                }
-
-                else {
-                    let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
-                    this.setState({...newState, ...panelState, filePath: nextProps.filePath});
-                }
+                let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
+                this.setState({...newState, ...panelState, filePath: nextProps.filePath});
             }
         }
     }

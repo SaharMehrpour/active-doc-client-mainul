@@ -70,16 +70,6 @@ export const updateRuleTable = (newRuleTable) => {
     };
 };
 
-
-export const updateRule = () => {
-    return {type: reduxStoreActions.action_update_rule};
-};
-
-
-export const submitNewTag = () => {
-    return {type: reduxStoreActions.action_new_tag}
-};
-
 /**
  * @param hierarchyData
  * @return {{data: {hierarchyData: *}, type: string}}
