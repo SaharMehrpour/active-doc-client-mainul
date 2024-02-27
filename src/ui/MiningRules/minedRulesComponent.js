@@ -257,7 +257,7 @@ class MinedRulesComponent extends Component {
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         if (countRules === 0) return null;
         return (<div className={"descriptionContainer"}>
-            <span className={"descriptionTitle"}>Design Rules</span>
+            <span className={"descriptionTitle"}>Tutorial</span>
             <div style={{marginBottom: "20px"}}>
                 <h5>The following code snippets illustrates potential design rules.</h5>
                 <h5>The left column denote <strong>when</strong> a design rules applies (IF part),
