@@ -163,7 +163,7 @@ function mapStateToProps(state) {
             props.content = state.openFilePath.replace(state.projectPath, "");
             break;
         case hashConst.learnDesignRules:
-            props.title = "Learn Design Rules";
+            props.title = "DesignRuleMiner"; // todo Temporary title for the study
             break;
         default:
             props.content = "Error no page is found for: " + state.currentHash[0];
