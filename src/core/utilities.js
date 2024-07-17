@@ -30,6 +30,26 @@ class Utilities {
                         tagInfo: data
                     };
                     break;
+                case webSocketSendMessage.send_info_for_edit_fix:
+                    messageJson.data={
+                        filePathOfSuggestedFix:data.data.fileToChange,
+                        filePathOfViolation:data.data.filePath,
+                        modifiedFileContent:data.data.modifiedFileContent
+                    }
+                    break;
+                
+                
+                case webSocketSendMessage.llm_modified_file_content:
+
+                    messageJson.data = {
+                        filePath: data.llmModifiedFileContent.data.filePath,
+                        explanation: data.llmModifiedFileContent.data.explanation,
+                        fileToChange: data.llmModifiedFileContent.data.fileToChange,
+                        modifiedFileContent:data.llmModifiedFileContent.data.modifiedFileContent,
+                        violatedCode:data.violatedCode
+                    }
+
+                    break;
                 case webSocketSendMessage.snippet_xml_msg:
                     messageJson.data = {
                         fileName: data.fileName,

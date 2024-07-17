@@ -1,7 +1,9 @@
 export const webSocketSendMessage = {
+    send_info_for_edit_fix:"SEND_INFO_FOR_EDIT_FIX",
     modified_rule_msg: "MODIFIED_RULE",
     modified_tag_msg: "MODIFIED_TAG",
     snippet_xml_msg: "XML_RESULT",
+    llm_modified_file_content: "LLM_MODIFIED_FILE_CONTENT",
     converted_java_snippet_msg: "CONVERTED_JAVA_SNIPPET",
     code_to_xml_msg: "EXPR_STMT",
     new_rule_msg: "NEW_RULE",
@@ -18,6 +20,7 @@ export const webSocketSendMessage = {
 };
 
 export const webSocketReceiveMessage = {
+    receive_content_for_edit_fix: "RECEIVE_CONTENT_FOR_EDIT_FIX",
     xml_files_msg: "XML",
     rule_table_msg: "RULE_TABLE",
     tag_table_msg: "TAG_TABLE",

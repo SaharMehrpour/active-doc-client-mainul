@@ -22,6 +22,12 @@ import { relatives } from "../core/ruleExecutorConstants";
 import { hashConst, none_filePath } from "./uiConstants";
 
 import { suggestFix } from "../activeLLM/suggestFix";
+import Prism from 'prismjs';
+import '../../src/prism-vs.css'; // Choose any theme you like
+
+// Import the language syntax for Java
+import 'prismjs/components/prism-java';
+import { getFileContentToSendToGPT } from "../core/sharedStates";
 
 class RulePanel extends Component {
 
@@ -506,18 +512,32 @@ class SnippetView extends Component {
         };
     }
 
+    saveConversationToSessionStorage = (key, conversationHistory) => {
+        sessionStorage.setItem(key, JSON.stringify(conversationHistory));
+    }
+
+    getConversationFromSessionStorage = (key) => {
+        const history = sessionStorage.getItem(key);
+        return history ? JSON.parse(history) : [];
+    }
+
+    clearConversationFromSessionStorage = (key) => {
+        sessionStorage.removeItem(key);
+    }
+
     handleSuggestion = async (
         rule,
         example,
         snippet,
         exampleFilePath,
         violationFilePath,
+        key
     ) => {
         const parsedSnippet = Utilities.removeSrcmlAnnotations(snippet);
         const parsedExample = Utilities.removeSrcmlAnnotations(example);
         // prevent multiple calls to suggestFix
         if (!this.state.suggestionCreated) {
-            suggestFix(
+            const conversationHistory = await suggestFix(
                 rule,
                 parsedExample,
                 parsedSnippet,
@@ -525,12 +545,87 @@ class SnippetView extends Component {
                 violationFilePath,
                 this.setState.bind(this),
             );
+
+            this.saveConversationToSessionStorage(key, conversationHistory);
+
             // notify the component that this snippet now has a suggested fix
             this.setState({ suggestionCreated: true });
         }
     };
 
+    generateDiff = (originalCode, modifiedCode) => {
+        const normalizeLines = (code) =>
+            code.split('\n')
+                .map(line =>
+                    line.trim()  // Trim leading and trailing whitespace
+                        .replace(/\s+/g, ' ')  // Normalize multiple spaces
+                        .replace(/\s*<\s*/g, '<')  // Normalize spaces around <
+                        .replace(/\s*>\s*/g, '>')  // Normalize spaces around >
+                        .replace(/\s*=\s*/g, '=')  // Normalize spaces around =
+                        .replace(/\s*\(\s*/g, '(')  // Normalize spaces around (
+                        .replace(/\s*\)\s*/g, ')')  // Normalize spaces around )
+                        .replace(/\s*\{\s*/g, '{')  // Normalize spaces around {
+                        .replace(/\s*\}\s*/g, '}')  // Normalize spaces around }
+                )
+                .filter(line => line !== '');
+
+        const originalLines = normalizeLines(originalCode);
+        const modifiedLines = normalizeLines(modifiedCode);
+        const diff = [];
+
+        // Identify added lines
+        modifiedLines.forEach(modifiedLine => {
+            if (!originalLines.includes(modifiedLine)) {
+                diff.push({ type: 'added', text: modifiedLine });
+            }
+        });
+
+        // Identify removed lines
+        originalLines.forEach(originalLine => {
+            if (!modifiedLines.includes(originalLine)) {
+                diff.push({ type: 'removed', text: originalLine });
+            }
+        });
+
+        // Update the state with the generated diff
+        //this.setState({ diff });
+
+        return diff;
+    };
+
+
+    renderDiff = () => {
+        const originalCode = Utilities.removeSrcmlAnnotations(this.state.d.surroundingNodes);
+        const modifiedCode = this.state.suggestedSnippet;
+        const diff = this.generateDiff(originalCode, modifiedCode);
+
+        const highlightCode = (code) => {
+            return Prism.highlight(code, Prism.languages.java, 'java');
+        };
+
+        return (
+            <div className="diff-container" style={{ fontFamily: 'monospace', whiteSpace: 'pre', border: '1px solid #d6d6d6', borderRadius:'7px', padding: '1px' }}>
+                {diff.map((line, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            backgroundColor: 'white'
+                        }}
+                    >
+                        <span style={{ color: line.type === 'added' ? 'green' : 'red' }}>
+                            {line.type === 'added' ? '+' : '-'}
+                        </span>
+                        <span dangerouslySetInnerHTML={{ __html: highlightCode(line.text) }}></span>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     render() {
+
+        const fileContentToSendToGPT = getFileContentToSendToGPT();
+        const uniqueKey = this.state.d.filePath;
         // NOTE: These styles can be moved to index.css in the future.
         // There was an issue with that, so this is a quick fix
         const titleStyle = {
@@ -561,8 +656,23 @@ class SnippetView extends Component {
             zIndex: "1",
         };
 
+        const containerStyle = {
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+        };
+
+        const paneStyle = {
+            padding: "10px",
+            borderBottom: "1px solid #ddd",
+        };
+
         // Store the API key in a variable
         const apiKey = localStorage.getItem("OPENAI_API_KEY");
+
+        const highlightCode = (code) => {
+            return Prism.highlight(code, Prism.languages.java, 'java');
+        };
 
         return (
             <section>
@@ -584,7 +694,7 @@ class SnippetView extends Component {
                     >
                         <pre
                             className="content"
-                            dangerouslySetInnerHTML={{ __html: this.state.d.snippet }}
+                            dangerouslySetInnerHTML={{ __html: highlightCode(Utilities.removeSrcmlAnnotations(this.state.d.snippet)) }}
                         />
 
                         <span style={buttonParent}>
@@ -602,6 +712,7 @@ class SnippetView extends Component {
                                                 this.state.d.surroundingNodes,
                                                 this.state.exampleFilePath,
                                                 this.state.d.filePath,
+                                                uniqueKey
                                             )
                                         }
                                         style={buttonStyle}
@@ -616,47 +727,69 @@ class SnippetView extends Component {
                         <h2 style={{ color: 'black', fontSize: '1.25em', fontWeight:'bold' ,textAlign: 'center' }}>Loading Fix...</h2>
                     )}
 
-
-                    {/* render the following IF the component state has received snippet */}
                     {this.state.suggestedSnippet && (
-                        <div>
-                            <h2 style={titleStyle}>Suggested Fix:</h2>
-                            <pre
-                                className="content"
-                                dangerouslySetInnerHTML={{
-                                    __html: this.state.suggestedSnippet,
-                                }}
-                            />
-                            <h2 style={titleStyle}>Suggestion Location:</h2>
-                            <p
-                                className="content"
-                                dangerouslySetInnerHTML={{
-                                    __html: this.state.suggestionFileName,
-                                }}
-                            />
-                            <h2 style={titleStyle}>Explanation:</h2>
-                            <p
-                                className="content"
-                                dangerouslySetInnerHTML={{
-                                    __html: this.state.snippetExplanation,
-                                }}
-                            />
+                        <div style={containerStyle}>
+                            <div style={paneStyle}>
+                                {/*                                <h2 style={titleStyle}>Suggested Fix:</h2>
+                                <pre
+                                    className="content"
+                                    dangerouslySetInnerHTML={{ __html: highlightCode(this.state.suggestedSnippet) }}
+                                />*/}
 
-                            <button
-                                // send the suggested fix and the explanation to to plugin
-                                onClick={() => {
-                                    this.props.onIgnoreFile(true);
-                                    Utilities.sendToServer(
-                                        this.props.ws,
-                                        webSocketSendMessage.snippet_xml_msg,
-                                        this.state.llmModifiedFileContent,
-                                    );
-                                    console.log(this.state.llmModifiedFileContent);
-                                }}
-                                style={buttonStyle}
-                            >
-                                Accept Fix
-                            </button>
+                                <h2 style={titleStyle}>Suggestion Location:</h2>
+                                <p
+                                    className="content"
+                                    dangerouslySetInnerHTML={{
+                                        __html: this.state.suggestionFileName,
+                                    }}
+                                />
+                                <h2 style={titleStyle}>Explanation:</h2>
+                                <p
+                                    className="content"
+                                    dangerouslySetInnerHTML={{
+                                        __html: this.state.snippetExplanation,
+                                    }}
+                                />
+
+                                <button
+                                    onClick={() => {
+                                        this.props.onIgnoreFile(true);
+                                        Utilities.sendToServer(
+                                            this.props.ws,
+                                            webSocketSendMessage.llm_modified_file_content,
+                                            {
+                                                llmModifiedFileContent: this.state.llmModifiedFileContent,
+                                                violatedCode: Utilities.removeSrcmlAnnotations(this.state.d.surroundingNodes)
+                                            }
+
+                                        );
+                                        console.log(this.state.llmModifiedFileContent);
+                                    }}
+                                    style={buttonStyle}
+                                >
+                                    Accept Fix
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        this.props.onIgnoreFile(true);
+                                        Utilities.sendToServer(
+                                            this.props.ws,
+                                            webSocketSendMessage.send_info_for_edit_fix,
+                                            this.state.llmModifiedFileContent,
+
+                                        );
+                                    }}
+                                    style={{ ...buttonStyle, marginLeft: '10px' }} // Inline styling for the new button
+                                >
+                                    Edit Fix
+                                </button>
+
+
+                            </div>
+                            <div style={paneStyle}>
+                                <h2 style={titleStyle}>Suggested Fix:</h2>
+                                {this.renderDiff()}
+                            </div>
                         </div>
                     )}
                 </div>

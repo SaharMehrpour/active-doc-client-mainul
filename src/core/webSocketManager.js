@@ -4,6 +4,7 @@
 
 import {Component} from "react";
 import {connect} from "react-redux";
+import { setFileContentToSendToGPT } from "./sharedStates";
 
 import {
     receiveExpressionStatementXML,
@@ -50,6 +51,10 @@ class WebSocketManager extends Component {
             }
             
             switch (message.command) {
+
+                case webSocketReceiveMessage.receive_content_for_edit_fix:
+                    setFileContentToSendToGPT(message.data);
+                    break;
 
                 case webSocketReceiveMessage.enter_chat_msg:
                     this.props.onLoadingGif(true);
