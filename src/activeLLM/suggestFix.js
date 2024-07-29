@@ -76,11 +76,15 @@ export async function suggestFix(
 
 
 export async function editFix(key, getConversationFromSessionStorage, saveConversationToSessionStorage, setState, fileContentToSendToGPT) {
+
+    console.log("CAME TO EDIT FIX");
+    console.log(fileContentToSendToGPT);
+
     // Create the additional prompt using the projectPath
     const additionalPrompt = `The solution you provided is excellent, however, I am confused how to incorporate your fix with in the code of the "fileName" variable of your solution. 
     I am providing you with the full content from the "fileName" file. Integrate your "code" within that code base. Be sure to maintain proper whitespace with \\t and \\n.
     Give a brief explanation of your fix as well.
-    Strictly output in JSON format. The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."} 
+    Strictly output in JSON format. The JSON should have the following format:{"code": "I am sorry", "explanation": "I am sorry that it didnt work", "fileName": "sorry.txt"} 
     \n My code - \n ${fileContentToSendToGPT}`;
 
     // Get conversation history from session storage

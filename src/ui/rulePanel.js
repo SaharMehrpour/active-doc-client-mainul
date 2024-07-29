@@ -21,13 +21,14 @@ import { webSocketSendMessage } from "../core/coreConstants";
 import { relatives } from "../core/ruleExecutorConstants";
 import { hashConst, none_filePath } from "./uiConstants";
 
-import { suggestFix } from "../activeLLM/suggestFix";
+import { suggestFix, editFix } from "../activeLLM/suggestFix";
 import Prism from 'prismjs';
 import '../../src/prism-vs.css'; // Choose any theme you like
 
 // Import the language syntax for Java
 import 'prismjs/components/prism-java';
 import { getFileContentToSendToGPT } from "../core/sharedStates";
+import WebSocketManager from "../core/webSocketManager";
 
 class RulePanel extends Component {
 
@@ -509,7 +510,9 @@ class SnippetView extends Component {
             snippetExplanation: null,
             suggestionFileName: null,
             llmModifiedFileContent: null,
+            fileContentToSendToGPT: getFileContentToSendToGPT(),
         };
+        this.onReceiveEditFixContent = this.onReceiveEditFixContent.bind(this);
     }
 
     saveConversationToSessionStorage = (key, conversationHistory) => {
@@ -524,6 +527,18 @@ class SnippetView extends Component {
     clearConversationFromSessionStorage = (key) => {
         sessionStorage.removeItem(key);
     }
+
+    handleEditFix = async (key) => {
+        console.log("Came to handle edit");
+        const fileContentToSendToGPT = getFileContentToSendToGPT();
+        await editFix(
+            key,
+            this.getConversationFromSessionStorage,
+            this.saveConversationToSessionStorage,
+            this.setState.bind(this),
+            fileContentToSendToGPT
+        );
+    };
 
     handleSuggestion = async (
         rule,
@@ -604,7 +619,7 @@ class SnippetView extends Component {
         };
 
         return (
-            <div className="diff-container" style={{ fontFamily: 'monospace', whiteSpace: 'pre', border: '1px solid #d6d6d6', borderRadius:'7px', padding: '1px' }}>
+            <div className="diff-container" style={{ fontFamily: 'monospace', whiteSpace: 'pre', border: '1px solid #d6d6d6', borderRadius: '7px', padding: '1px' }}>
                 {diff.map((line, index) => (
                     <div
                         key={index}
@@ -622,12 +637,28 @@ class SnippetView extends Component {
         );
     };
 
-    render() {
-
+    /*componentDidUpdate(prevProps, prevState) {
+        console.log("in component did update");
         const fileContentToSendToGPT = getFileContentToSendToGPT();
+        if (fileContentToSendToGPT && fileContentToSendToGPT !== prevState.fileContentToSendToGPT) {
+            console.log("In component updated");
+            this.setState({ fileContentToSendToGPT }, () => {
+                this.handleEditFix(this.state.d.filePath);
+            });
+        }
+    }*/
+
+    onReceiveEditFixContent = () => {
+        // Force an update to check for changes in the shared state
+        console.log("in onReceive");
+        this.setState({ fileContentToSendToGPT: getFileContentToSendToGPT() });
+        this.handleEditFix(this.state.d.filePath);
+    };
+
+    render() {
         const uniqueKey = this.state.d.filePath;
-        // NOTE: These styles can be moved to index.css in the future.
-        // There was an issue with that, so this is a quick fix
+        const apiKey = localStorage.getItem("OPENAI_API_KEY");
+
         const titleStyle = {
             color: "#333",
             fontSize: "1.10em",
@@ -667,15 +698,13 @@ class SnippetView extends Component {
             borderBottom: "1px solid #ddd",
         };
 
-        // Store the API key in a variable
-        const apiKey = localStorage.getItem("OPENAI_API_KEY");
-
         const highlightCode = (code) => {
             return Prism.highlight(code, Prism.languages.java, 'java');
         };
 
         return (
             <section>
+                {/*<WebSocketManager onReceiveEditFixContent={this.onReceiveEditFixContent}/> */}
                 <div
                     data-file-path={this.state.d.filePath}
                     className="snippetDiv"
@@ -724,7 +753,7 @@ class SnippetView extends Component {
                     </div>
 
                     {this.state.suggestionCreated && !this.state.suggestedSnippet && (
-                        <h2 style={{ color: 'black', fontSize: '1.25em', fontWeight:'bold' ,textAlign: 'center' }}>Loading Fix...</h2>
+                        <h2 style={{ color: 'black', fontSize: '1.25em', fontWeight: 'bold', textAlign: 'center' }}>Loading Fix...</h2>
                     )}
 
                     {this.state.suggestedSnippet && (

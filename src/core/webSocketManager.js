@@ -53,7 +53,10 @@ class WebSocketManager extends Component {
             switch (message.command) {
 
                 case webSocketReceiveMessage.receive_content_for_edit_fix:
+                    console.log("EDIT FIX CONTENT: ");
+                    console.log(message.data);
                     setFileContentToSendToGPT(message.data);
+                    this.props.onReceiveEditFixContent(); // Notify parent component
                     break;
 
                 case webSocketReceiveMessage.enter_chat_msg:
