@@ -11,11 +11,15 @@ import {Button} from "react-bootstrap";
 import {MdPlaylistAdd} from "react-icons/md";
 import {changeEditMode} from "../actions";
 import {hashConst} from "./uiConstants";
+import {reduxStoreMessages} from "../reduxStoreConstants";
 
 class RuleTable extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            newStateVariable: props.newReduxStoreVariable
+        }
     }
 
     render() {
@@ -38,7 +42,7 @@ class RuleTable extends Component {
                 <div>
                     {this.props.indicesOfRulesToDisplay.map((d, i) =>
                         (<div key={i} style={{paddingBottom: "5px"}}>
-                            <RulePanel ruleIndex={d}/>
+                            <RulePanel ruleIndex={d} newStateVariable={this.state.newStateVariable}/>
                         </div>)
                     )}
                 </div>
@@ -51,6 +55,14 @@ class RuleTable extends Component {
         );
     }
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        switch (nextProps.message) {
+            case reduxStoreMessages.update_new_redux_variable:
+                this.setState({newStateVariable: nextProps.newReduxStoreVariable});
+                break;
+        }
+    }
+
 }
 
 // map state to props
@@ -59,7 +71,8 @@ function mapStateToProps(state) {
     let props = {
         newRule: state.rulePadState.isEditMode,
         indicesOfRulesToDisplay: state.ruleTable.map(d => d.index),
-        hash0: state.currentHash[0]
+        hash0: state.currentHash[0],
+        newReduxStoreVariable: state.activeLLM.newReduxStoreVariable,
     };
 
 
