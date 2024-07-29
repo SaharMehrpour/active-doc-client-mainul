@@ -721,6 +721,10 @@ export const initial_state = {
         },
         selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT,
         minedRules: [],
+    },
+
+    activeLLM: {
+        newReduxStoreVariable: "",
     }
 
 };

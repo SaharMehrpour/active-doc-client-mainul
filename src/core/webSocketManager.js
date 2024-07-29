@@ -10,7 +10,7 @@ import {
     ignoreFileChange, updateFilePath,
     updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles,
-    updateProjectHierarchyData, updatedMinedRules, updateProjectPath,
+    updateProjectHierarchyData, updatedMinedRules, updateProjectPath, updateReduxStoreWithSomeData,
     updateLoadingGif, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
@@ -222,6 +222,11 @@ class WebSocketManager extends Component {
                         }).catch(e => console.log("error happened in promise", e));
                     break;
 
+                case webSocketReceiveMessage.test_message:
+                    const someData = "someData";
+                    this.props.onUpdateReduxStoreWithSomeData(someData);
+                    break;
+
                 default:
             }
         };
@@ -260,6 +265,7 @@ function mapDispatchToProps(dispatch) {
         onUpdateDoiInformation: (doiInformation) => dispatch(updateDoiInformation(doiInformation)),
         onRequestMineRulesForElement: () => dispatch(requestMineRulesForElement()),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
+        onUpdateReduxStoreWithSomeData: (someData) => dispatch(updateReduxStoreWithSomeData(someData))
     }
 }
 

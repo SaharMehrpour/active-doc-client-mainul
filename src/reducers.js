@@ -493,6 +493,15 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                }
             });
 
+        case reduxStoreActions.action_test:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.update_new_redux_variable,
+                activeLLM: {
+                    ...state.activeLLM,
+                    newReduxStoreVariable: action.data["newReduxStoreVariable"]
+                }
+            });
+
         default:
             return Object.assign({}, state);
     }

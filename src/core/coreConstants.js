@@ -43,7 +43,9 @@ export const webSocketReceiveMessage = {
     mined_design_rules: "MINED_DESIGN_RULES",
 
     enter_chat_msg: "ENTER",
-    left_chat_msg: "LEFT"
+    left_chat_msg: "LEFT",
+
+    test_message: "TEST_MESSAGE"
 };
 
 export const defaultXML = "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +

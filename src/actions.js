@@ -401,3 +401,14 @@ export const updateSelectedAlgorithm = (newAlgorithm) => {
         data: {selectedAlgorithm: newAlgorithm}
     }
 }
+
+/**
+ * @param someData {string} or another data type.
+ * @return {{data: {newReduxStoreVariable}, type: string}}
+ */
+export const updateReduxStoreWithSomeData = (someData) => {
+    return {
+        type: reduxStoreActions.action_test,
+        data: {newReduxStoreVariable: someData}
+    }
+}
